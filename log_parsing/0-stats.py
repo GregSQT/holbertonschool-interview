@@ -1,44 +1,56 @@
 #!/usr/bin/python3
-"""This script reads stdin line by line and computes metrics"""
+"""
+this file will be combined with
+generator to make a resumed of
+incoming request
+"""
 import sys
+import signal
+import re
 
 
-def printer(total, status):
-    print("File size: {}".format(total))
-    for key, value in sorted(status.items()):
-        if value != 0:
-            print("{}: {}".format(key, value))
+def print_result(dictstatus: dict[str, int], filesize: int):
+    print(f"File size: {filesize}")
+    array_keys: [str] = []
+    for k in dictstatus.keys():
+        array_keys.append(k)
+    array_keys.sort()
+    for keys in array_keys:
+        print(f"{keys}: {dictstatus[keys]}")
 
 
-def computes_metrics():
-    try:
-        total = 0
-        i = 0
-        status = {
-            '200': 0,
-            '301': 0,
-            '400': 0,
-            '401': 0,
-            '403': 0,
-            '404': 0,
-            '405': 0,
-            '500': 0,
-        }
-        for line in sys.stdin:
-            line = line.replace("-", " ")
-            line = line.split()
-            if (len(line) == 10):
-                if line[-2] in status.keys():
-                    status[line[-2]] += 1
-                total += int(line[-1])
-                i += 1
-            if i == 10 or i == 0:
-                printer(total, status)
-                i = 0
-        printer(total, status)
-    except KeyboardInterrupt as Error:
-        printer(total, status)
-
+def denied(_signalno, _stack):
+    print_result(d, fileSize)
+    sys.exit(0)
 
 if __name__ == '__main__':
-    computes_metrics()
+    fileSize: int = 0
+    status: str = ""
+    d: dict[str, int] = {}
+    nbLine: int = 0
+
+    signal.signal(signal.SIGTERM, denied)
+    signal.signal(signal.SIGINT, denied)
+
+    for line in sys.stdin:
+        if re.search("^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d+\] \"GET \/projects\/260 HTTP\/1\.1\" \d{3} \d{1,4}$", line) is None:
+            print(f"skipped: {line}")
+            continue
+        if line == "":
+            continue
+        inputSplit = line.split(" ")
+        n: str = inputSplit.pop()
+        if '\n' not in n:
+            continue
+        fileSize += int(n.replace('\n', ""))
+        status = inputSplit.pop()
+        value = d.get(status)
+        if value:
+            d[status] = value + 1
+        else:
+            d[status] = 1
+
+        nbLine += 1
+        if nbLine % 10 == 0:
+            print_result(d, fileSize)
+    print_result(d, fileSize)
