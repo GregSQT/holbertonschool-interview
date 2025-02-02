@@ -1,47 +1,44 @@
 #!/usr/bin/python3
-"""
-Task - Script that reads stdin line by line and computes metrics
-"""
+"""This script reads stdin line by line and computes metrics"""
 import sys
 
 
-if __name__ == "__main__":
-    st_code = {"200": 0,
-               "301": 0,
-               "400": 0,
-               "401": 0,
-               "403": 0,
-               "404": 0,
-               "405": 0,
-               "500": 0}
-    count = 1
-    file_size = 0
+def printer(total, status):
+    print("File size: {}".format(total))
+    for key, value in sorted(status.items()):
+        if value != 0:
+            print("{}: {}".format(key, value))
 
-    def parse_line(line):
-        """ Read, parse and grab data"""
-        try:
-            parsed_line = line.split()
-            status_code = parsed_line[-2]
-            if status_code in st_code.keys():
-                st_code[status_code] += 1
-            return int(parsed_line[-1])
-        except Exception:
-            return 0
 
-    def print_stats():
-        """print stats in ascending order"""
-        print("File size: {}".format(file_size))
-        for key in sorted(st_code.keys()):
-            if st_code[key]:
-                print("{}: {}".format(key, st_code[key]))
-
+def computes_metrics():
     try:
+        total = 0
+        i = 0
+        status = {
+            '200': 0,
+            '301': 0,
+            '400': 0,
+            '401': 0,
+            '403': 0,
+            '404': 0,
+            '405': 0,
+            '500': 0,
+        }
         for line in sys.stdin:
-            file_size += parse_line(line)
-            if count % 10 == 0:
-                print_stats()
-            count += 1
-    except KeyboardInterrupt:
-        print_stats()
-        raise
-    print_stats()
+            line = line.replace("-", " ")
+            line = line.split()
+            if (len(line) == 10):
+                if line[-2] in status.keys():
+                    status[line[-2]] += 1
+                total += int(line[-1])
+                i += 1
+            if i == 10 or i == 0:
+                printer(total, status)
+                i = 0
+        printer(total, status)
+    except KeyboardInterrupt as Error:
+        printer(total, status)
+
+
+if __name__ == '__main__':
+    computes_metrics()
