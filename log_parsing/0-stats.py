@@ -2,7 +2,6 @@
 """
 Task - Script that reads stdin line by line and computes metrics
 """
-
 import sys
 
 
