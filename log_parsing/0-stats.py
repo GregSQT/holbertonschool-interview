@@ -32,23 +32,42 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, denied)
     signal.signal(signal.SIGINT, denied)
 
-    for line in sys.stdin:
-        if re.search("^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d+\] \"GET \/projects\/260 HTTP\/1\.1\" \d{3} \d{1,4}$", line) is None:
-            print(f"skipped: {line}")
-            continue
-        if line == "":
-            continue
-        inputSplit = line.split(" ")
-        n: str = inputSplit.pop()
-        if '\n' not in n:
-            continue
-        fileSize += int(n.replace('\n', ""))
-        status = inputSplit.pop()
-        value = d.get(status)
-        if value:
-            d[status] = value + 1
-        else:
-            d[status] = 1
+   import sys
+import re
+
+# Initialize variables
+fileSize = 0
+d = {}
+
+# Use a raw string for regex to avoid escape sequence warnings
+pattern = r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+\] \"GET \/projects\/260 HTTP\/1\.1\" \d{3} \d{1,4}$"
+
+for line in sys.stdin:
+    line = line.strip()  # Remove leading/trailing spaces and newlines
+    
+    # Validate the line format
+    if not re.search(pattern, line):
+        print(f"skipped: {line}")
+        continue
+    
+    # Split the line into parts
+    inputSplit = line.split(" ")
+    
+    if len(inputSplit) < 2:  # Ensure the line has enough elements
+        continue
+    
+    # Extract status code and file size
+    n = inputSplit.pop()
+    status = inputSplit.pop()
+    
+    # Ensure the file size is valid
+    if not n.isdigit():
+        continue
+
+    fileSize += int(n)
+
+    # Update status code count
+    d[status] = d.get(status, 0) + 1
 
         nbLine += 1
         if nbLine % 10 == 0:
