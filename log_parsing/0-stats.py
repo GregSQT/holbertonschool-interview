@@ -32,7 +32,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, denied)
     signal.signal(signal.SIGINT, denied)
 
-   import sys
+import sys
 import re
 
 # Initialize variables
