@@ -69,7 +69,7 @@ for line in sys.stdin:
     # Update status code count
     d[status] = d.get(status, 0) + 1
 
-        nbLine += 1
-        if nbLine % 10 == 0:
-            print_result(d, fileSize)
+    nbLine += 1
+    if nbLine % 10 == 0:
+        print_result(d, fileSize)
     print_result(d, fileSize)
