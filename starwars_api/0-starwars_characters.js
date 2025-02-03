@@ -1,28 +1,25 @@
 #!/usr/bin/node
-
 const request = require('request');
 
-const filmNum = process.argv[2] + '/';
-const filmURL = 'https://swapi-api.hbtn.io/api/films/';
-
-// Makes API request, sets async to allow await promise
-request(filmURL + filmNum, async function (err, res, body) {
-  if (err) return console.error(err);
-
-  // find URLs of each character in the film as a list obj
-  const charURLList = JSON.parse(body).characters;
-
-  // Use URL list to character pages to make new requests
-  // await queues requests until they resolve in order
-  for (const charURL of charURLList) {
-    await new Promise(function (resolve, reject) {
-      request(charURL, function (err, res, body) {
-        if (err) return console.error(err);
-
-        // finds each character name and prints in URL order
-        console.log(JSON.parse(body).name);
-        resolve();
+const URL = 'https://swapi-api.hbtn.io/api/films/';
+request.get(URL + process.argv[2], async (error, response, body) => {
+  if (response.statusCode === 200 && error === null) {
+    const linkChars = JSON.parse(body).characters;
+    const linkCharsList = chr => {
+      const promise = new Promise((resolve, reject) => {
+        request.get(chr, (error, response, body) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(body);
+          }
+        });
       });
-    });
+      return promise;
+    };
+    for (let i = 0; i < linkChars.length; i++) {
+      const result = await linkCharsList(linkChars[i]);
+      console.log(JSON.parse(result).name);
+    }
   }
 });
