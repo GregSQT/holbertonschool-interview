@@ -23,4 +23,4 @@ size_t free_listint_safe(listint_t **h);
 
 listint_t *find_listint_loop(listint_t *head);
 
-#endif
+#endif /* _LIST_ */
