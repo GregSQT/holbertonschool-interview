@@ -1,59 +1,89 @@
 #include "sort.h"
 
 /**
- * unite - Combinates left and rigth arrays into the original one
- * @size:	[ int]	size of the array
- * @array:	[*int]	pointer to the head of the array
- * @left:	[*int]	pointer to left array
- * @right:	[*int]	pointer to right array
- **/
-void unite(size_t size, int *array, int *left, int *right)
+ * merge_sub - merge sorting algorithm function.
+ *@subarray: array split into sub array.
+ *@buffer: buffer of array.
+ *@lo: low partition.
+ *@mid: mid partition.
+ *@hi: high partition.
+ * Return: Always 0
+ */
+void merge_sub(int *subarray, int *buffer, size_t lo, size_t mid, size_t hi)
 {
-	int i, j, k, l_lengh, r_lengh;
+	size_t low;
+	size_t midi;
+	size_t a = 0;
 
-	i = j = k = 0;
-	l_lengh = size / 2;
-	r_lengh = size - l_lengh;
+	printf("Merging...\n[left]: ");
+	print_array(subarray + lo, mid - lo);
 
-	printf("Merging...\n");
-	printf("[left]: ");
-	print_array(left, l_lengh);
 	printf("[right]: ");
-	print_array(right, r_lengh);
+	print_array(subarray + mid, hi - mid);
 
-	while (i < l_lengh && j < r_lengh)
-		array[k++] = (left[i] < right[j]) ? left[i++] : right[j++];
-
-	while (i < l_lengh)
-		array[k++] = left[i++];
-
-	while (j < r_lengh)
-		array[k++] = right[j++];
-
+	for (low = lo, midi = mid; low < mid && midi < hi; a++)
+	{
+		if (subarray[low] < subarray[midi])
+		{
+			buffer[a] = subarray[low++];
+		}
+		else
+		{
+			buffer[a] = subarray[midi++];
+		}
+	}
+	for (; low < mid; low++)
+	{
+		buffer[a++] = subarray[low];
+	}
+	for (; midi < hi; midi++)
+	{
+		buffer[a++] = subarray[midi];
+	}
+	for (low = lo, a = 0; low < hi; low++)
+	{
+		subarray[low] = buffer[a++];
+	}
 	printf("[Done]: ");
-	print_array(array, size);
+	print_array(subarray + lo, hi - lo);
 }
 
 /**
- * merge_sort - sorts in ascending order using Merge Sort method.
- * @array:	[*int]	pointer to the head of the array
- * @size:	[ int]	size of the array
- **/
+ * merge_sort_call - calling the merge sort function.
+ *@subarray: subarray to be sorted.
+ *@buffer: buffer of array.
+ *@lo: low partition.
+ *@hi: high partition.
+ * Return: Always 0
+ */
+void merge_sort_call(int *subarray, int *buffer, size_t lo, size_t hi)
+{
+	size_t mid;
+
+	if (hi - lo > 1)
+	{
+		mid = lo + (hi - lo) / 2;
+		merge_sort_call(subarray, buffer, lo, mid);
+		merge_sort_call(subarray, buffer, mid, hi);
+		merge_sub(subarray, buffer, lo, mid, hi);
+	}
+}
+
+/**
+ * merge_sort - merge sort algorithm implementation
+ *@array: array to be sorted.
+ *@size: size of array to be sorted.
+ * Return: void.
+ */
 void merge_sort(int *array, size_t size)
 {
-	size_t middle, i;
-	int left[MAX], right[MAX];
+	int *buffer;
 
-	if (!array || size < 2)
+	buffer = malloc(sizeof(int) * size);
+	if (buffer == NULL)
 		return;
 
-	for (i = 0, middle = size / 2; i < middle; i++)
-		left[i] = array[i];
+	merge_sort_call(array, buffer, 0, size);
 
-	for (i = middle; i < size; i++)
-		right[i - middle] = array[i];
-
-	merge_sort(left, middle);
-	merge_sort(right, size - middle);
-	unite(size, array, left, right);
+	free(buffer);
 }

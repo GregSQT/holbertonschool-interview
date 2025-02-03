@@ -1,12 +1,7 @@
-#ifndef SORT_H
-#define SORT_H
-
-#define MAX 2000
-
-#include <stdlib.h>
+#ifndef _SORT_H
+#define _SORT_H
 #include <stdio.h>
-
-void merge_sort(int *array, size_t size);
+#include <stdlib.h>
 void print_array(const int *array, size_t size);
-
-#endif /* SORT_H */
+void merge_sort(int *array, size_t size);
+#endif
