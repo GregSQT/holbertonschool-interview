@@ -2,7 +2,6 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 /**
  * check_avl - Recursively checks if a tree is an AVL tree.
  * @tree: Pointer to the root node of the tree.
