@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 """
 Exercice :
 You have n number of locked boxes in front of you.
