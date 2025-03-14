@@ -1,56 +1,78 @@
 #include "binary_trees.h"
-#include <limits.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "binary_tree_is_bts.c"
 /**
- * check_avl - Recursively checks if a tree is an AVL tree.
- * @tree: Pointer to the root node of the tree.
- * @min: Minimum allowed value for node.
- * @max: Maximum allowed value for node.
- * @height: Pointer to store the height of the current node.
- *
- * Return: 1 if tree is AVL, otherwise 0.
- */
-int check_avl(const binary_tree_t *tree, int min, int max, int *height)
+ * height - measures the height of a binary tree
+ * @tree: pointer to the node
+ * Return: height
+ **/
+int height(binary_tree_t *tree)
 {
-    int left_height = 0, right_height = 0;
-    int left_avl, right_avl;
-    
-    if (!tree)
-    {
-        *height = 0;
-        return (1);
-    }
-    
-    if (tree->n <= min || tree->n >= max)
-        return (0);
-    
-    left_avl = check_avl(tree->left, min, tree->n, &left_height);
-    right_avl = check_avl(tree->right, tree->n, max, &right_height);
-    
-    *height = (left_height > right_height ? left_height : right_height) + 1;
-    
-    if (!left_avl || !right_avl)
-        return (0);
-    
-    if (abs(left_height - right_height) > 1)
-        return (0);
-    
-    return (1);
-}
+	int left, right;
 
+	if (!tree)
+		return (0);
+	if (!tree->left && !tree->right)
+		return (1);
+	left = height(tree->left) + 1;
+	right = height(tree->right) + 1;
+	if (left > right)
+		return (left);
+	else
+		return (right);
+}
 /**
- * binary_tree_is_avl - Checks if a binary tree is a valid AVL tree.
- * @tree: Pointer to the root node of the tree to check.
- *
- * Return: 1 if tree is a valid AVL Tree, otherwise 0.
- */
+ * binary_tree_balance - measures the balance factor of a binary tree
+ * @tree: pointer to the node (use height)
+ * Return: balance factor from the node
+ **/
+int binary_tree_balance(const binary_tree_t *tree)
+{
+	int hleft, hright;
+
+	if (!tree)
+		return (0);
+	if (!tree->left && !tree->right)
+		return (0);
+	hleft = height(tree->left);
+	hright = height(tree->right);
+	return (hleft - hright);
+}
+/**
+ * preorder_balance - goes through a binary tree using pre-order traversal
+ * @f: pointer to function that chacks balance
+ * @t: pointer to the root tree
+ * Return: balanced 1 , unbalanced 0
+ **/
+int preorder_balance(const binary_tree_t *t, int (*f)(const binary_tree_t *))
+{
+	int balance_r, balance_l;
+
+	if (!t || (t->left == NULL && t->right == NULL))
+		return (1);
+	if (f(t) > 1 || f(t) < -1)
+		return (0);
+	if (t->left)
+		balance_r = preorder_balance(t->left, f);
+	if (t->right)
+		balance_l = preorder_balance(t->right, f);
+	return (balance_r & balance_l);
+}
+/**
+ * binary_tree_is_avl - Determine if tree is AVL
+ * @tree: pointer to the root
+ * Return: 1 if tree is AVL / 0 otherwise
+ **/
 int binary_tree_is_avl(const binary_tree_t *tree)
 {
-    int height = 0;
-    
-    if (!tree)
-        return (0);
-    
-    return (check_avl(tree, INT_MIN, INT_MAX, &height));
+	int balance;
+
+	if (!tree)
+		return (0);
+	if (!tree->left && !tree->right)
+		return (1);
+	if (!binary_tree_is_bst(tree))
+		return (0);
+
+	balance = preorder_balance(tree, &binary_tree_balance);
+	return (balance);
 }
