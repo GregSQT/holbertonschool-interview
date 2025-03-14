@@ -76,3 +76,4 @@ int binary_tree_is_avl(const binary_tree_t *tree)
 	balance = preorder_balance(tree, &binary_tree_balance);
 	return (balance);
 }
+
