@@ -6,8 +6,8 @@ def validUTF8(data):
     """
     bit1 checks if significant byte is 1
     bit2 checks if second significant byte is 0
-    nbytes keeps track of how many 1s before 0 occurs
-    data represented by a list of integers to check
+    nbytes = 1s before 0 occurs
+    data is a list of integers to check
     """
 
     bit1 = 1 << 7
