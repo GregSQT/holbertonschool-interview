@@ -63,5 +63,6 @@ def main():
     board = [[0 for i in range(n)]for j in range(n)]
     nQueens(board, 0, n)
 
+
 if __name__ == "__main__":
     main()
