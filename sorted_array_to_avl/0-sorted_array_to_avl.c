@@ -1,56 +1,73 @@
 #include "binary_trees.h"
 
 /**
- * new_node - creates new node
- * @value: value of new node
- * Return: new node
+ * create_node - Create a node
+ * @parent: Pointer to parent tree
+ * @value: Value to insert
+ *
+ * Return: A new node
  */
-avl_t *new_node(int value)
+avl_t *create_node(avl_t *parent, int value)
 {
-	avl_t *new = malloc(sizeof(avl_t));
+	avl_t *node = NULL;
 
-	new->n = value;
-	new->left = NULL;
-	new->right = NULL;
-	return (new);
+	node = malloc(sizeof(avl_t));
+	if (node == NULL)
+	{
+		fprintf(stderr, "Can't malloc\n");
+		exit(1);
+	}
+	node->n = value;
+	node->parent = parent;
+	node->left = NULL;
+	node->right = NULL;
+	return (node);
 }
+
 /**
- * array_to_tree - recursive function to build tree
- * @array: array to build from
- * @start: start
- * @end: end
- * Return: avl tree
+ * insert_node - Insert a new node recursively
+ * @root: Pointer to root of tree
+ * @start: Array start value
+ * @end: Array end value
+ * @array: array with values to insert
+ *
+ * return: Nothing
  */
-avl_t *array_to_tree(int *array, int start, int end)
+void insert_node(avl_t **root, int start, int end, int *array)
 {
-	avl_t *root = NULL;
-	int mid;
+	avl_t *node = NULL;
+	int mid = 0;
 
-	if (start > end)
-		return (NULL);
-	mid = (start + end) / 2;
-	root = new_node(array[mid]);
-	if (root == NULL)
-		return (NULL);
-	root->left = array_to_tree(array, start, mid - 1);
-	if (root->left != NULL)
-		root->left->parent = root;
-	root->right = array_to_tree(array, mid + 1, end);
-	if (root->right != NULL)
-		root->right->parent = root;
-	return (root);
+	if (end - start > 1)
+	{
+		mid = (end - start) / 2 + start;
+		node = create_node((*root), array[mid]);
+		if (array[mid] > (*root)->n)
+			(*root)->right = node;
+		else if (array[mid] < (*root)->n)
+			(*root)->left = node;
+		insert_node(&node, start, mid, array);
+		insert_node(&node, mid, end, array);
+	}
 }
+
 /**
- * sorted_array_to_avl - entry point
- * @array: array to build tree from
- * @size: size of array
- * Return: avl tree
+ * sorted_array_to_avl - Builds an AVL tree from an array
+ * @array: Is a pointer to the first element of the array to be converted
+ * @size: Is the number of element in the array
+ *
+ * Return: A pointer to the root node of the created AVL tree,
+ * or NULL on failure
  */
 avl_t *sorted_array_to_avl(int *array, size_t size)
 {
-	avl_t *root = array_to_tree(array, 0, size - 1);
+	avl_t *root = NULL;
+	int mid = (size - 1) / 2;
 
-	if (size < 1)
+	if (!array)
 		return (NULL);
+	root = create_node(NULL, array[mid]);
+	insert_node(&root, -1, mid, array);
+	insert_node(&root, mid, size, array);
 	return (root);
 }
