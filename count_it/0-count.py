@@ -32,5 +32,5 @@ def count_words(subreddit, word_list, dic={}, after=None):
             if v > 0:
                 print('{}: {}'.format(k, v))
 
-    except:
+    #except:
         return
