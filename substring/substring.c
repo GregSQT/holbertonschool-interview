@@ -23,7 +23,7 @@ int check(int *aux_indx, int wordlen, int idx_len)
 	for (i = 0; i < idx_len - 1; i++)
 	{
 		if (aux_indx[i + 1] - aux_indx[i]  != wordlen)
-			return (0);
+			return (1);
 	}
 	return (0);
 }
@@ -32,7 +32,7 @@ int check(int *aux_indx, int wordlen, int idx_len)
  * @s: string base
  * @words: array of words to searh in the string
  * @nb_words: number of words
- * Return: array with size of substring (strstr return) for every word or NULL
+ * Return: array with size of substring (strstr return) for every word or NULL Return: array with size of substring (strstr return) for every word or NULL
  **/
 int *search(char const *s, char const **words, int nb_words)
 {
