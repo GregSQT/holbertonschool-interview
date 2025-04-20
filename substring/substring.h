@@ -1,10 +1,12 @@
-#ifndef _SUBSTR_H
-#define _SUBSTR_H
-#include <stdlib.h>
-#include <stdio.h>
+#ifndef _SUBSTRING_H_
+#define _SUBSTRING_H_
+
 #include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+
 int *find_substring(char const *s, char const **words, int nb_words, int *n);
-int cmpfunc(const void *a, const void *b);
-int check(int *aux_indx, int wordlen, int idx_len);
-int *search(char const *s, char const **words, int nb_words);
-#endif
+
+#endif /* _SUBSTRING_H_ */

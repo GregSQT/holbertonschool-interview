@@ -1,7 +1,16 @@
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "substring.h"
 
+/**
+ * main - Entry point
+ *
+ * @ac: Argument counter
+ * @av: Argument vector
+ *
+ * Return: EXIT_SUCCESS or EXIT_FAILURE
+ */
 int main(int ac, char const **av)
 {
 	char const *s;
